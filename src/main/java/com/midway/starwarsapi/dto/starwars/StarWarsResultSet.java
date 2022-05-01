@@ -1,6 +1,9 @@
 package com.midway.starwarsapi.dto.starwars;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.midway.starwarsapi.util.Util;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,13 +13,23 @@ public class StarWarsResultSet<T extends AbstractDto> {
     @Getter @Setter private Integer count;
 
     @JsonProperty("previous")
-    @Getter @Setter private String previousUri;
+    @Getter private String previousUri;
+    public void sePreviousUri(String previousUri) {
+        this.previousUri = previousUri;
+        previousPage = Util.getNumberFromUrl(previousUri);
+    }
 
+    @JsonIgnore @Hidden
     @Getter @Setter private Integer previousPage;
 
     @JsonProperty("next")
-    @Getter @Setter private String nextUri;
+    @Getter private String nextUri;
+    public void seNextUri(String previousUri) {
+        this.nextUri = nextUri;
+        nextPage = Util.getNumberFromUrl(nextUri);
+    }
 
+    @JsonIgnore @Hidden
     @Getter @Setter private Integer nextPage;
 
     @Getter @Setter List<T> results;

@@ -16,7 +16,7 @@ public class FilmLoader {
 
     @PostConstruct
     public void populateRedisCache() {
-        List<FilmDto> films = starwarsFilmRestService.getResultSet(new FilmResultSet());
+        List<FilmDto> films = starwarsFilmRestService.getList(new FilmResultSet(), new FilmDto());
         // @PutSomething
         int i = 0;
     }

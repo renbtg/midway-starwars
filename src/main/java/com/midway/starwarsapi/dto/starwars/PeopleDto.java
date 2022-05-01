@@ -1,10 +1,11 @@
 package com.midway.starwarsapi.dto.starwars;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CharacterDto extends AbstractDto {
+public class PeopleDto extends AbstractDto {
     @Getter @Setter private String name;
     @Getter @Setter private Integer height;
     @Getter @Setter private Integer mass;
@@ -18,12 +19,14 @@ public class CharacterDto extends AbstractDto {
 
     @JsonProperty("homeworldDetail") @Getter @Setter private PlanetDto homeWorldDetail;
 
-    public CharacterDto() {}
-    public CharacterDto(int id) {
+    // TODO - referenced Lists like "films", "vehichles" etc.
+
+    public PeopleDto() {}
+    public PeopleDto(int id) {
         super(id);
     }
     @Override
     public String restEntityName() {
-        return CHARACTER_REST_URL_PIECE;
+        return PEOPLE_REST_URL_PIECE;
     }
 }

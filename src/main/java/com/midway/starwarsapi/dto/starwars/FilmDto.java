@@ -31,16 +31,16 @@ public class FilmDto extends AbstractDto {
     @Getter @Setter private LocalDate releaseDate;
 
     @JsonProperty("characters")
-    @Getter @Setter private List<String> charactersUrlList;
+    @Getter @Setter private List<String> characterUrlList;
 
     @JsonProperty("characterDetails")
-    @Getter @Setter private List<CharacterDto> characterDtoList;
+    @Getter @Setter private List<PeopleDto> characterList;
 
     @JsonProperty("planets")
     @Getter @Setter private List<String> planetUrlList;
 
     @JsonProperty("planetDetails")
-    @Getter @Setter private List<PlanetDto> planetDtoList;
+    @Getter @Setter private List<PlanetDto> planetList;
 
     @JsonProperty("starships")
     @Getter @Setter private List<String> starshipUrlList;

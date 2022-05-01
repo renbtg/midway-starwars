@@ -1,6 +1,7 @@
 package com.midway.starwarsapi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.midway.starwarsapi.constants.DateTimeConstants;
 import org.apache.logging.log4j.LogManager;
@@ -120,44 +121,6 @@ public class Util {
         return sb.toString();
     }
 
-    public static Object possibleBigDecimalInfinity(BigDecimal bigDecimal) {
-        if (bigDecimal == null) {
-            return null;
-        }
-        if (bigDecimal.longValue() == Util.lowLong()) {
-            return "-Infinity";
-        } else if (bigDecimal.longValue() == Util.highLong()) {
-            return "Infinity";
-        } else {
-            return bigDecimal;
-        }
-    }
-
-    public static BigDecimal bigDecimalFromPossibleInfinity(Object o) {
-        if (o == null) {
-            return null;
-        }
-        if (o instanceof String s) {
-            if (s.equalsIgnoreCase("-infinity")) {
-                return new BigDecimal(Util.lowLong());
-            } else if (s.equalsIgnoreCase("infinity") || s.equalsIgnoreCase("+infinity")) {
-                return new BigDecimal(Util.highLong());
-            } else {
-
-                return null;
-            }
-        } else {
-            BigDecimal retVal;
-            try {
-                retVal = new BigDecimal(o.toString());
-            } catch (NumberFormatException e) {
-
-                return null;
-            }
-            return retVal;
-        }
-    }
-
     public static boolean bigDecimalEquals(BigDecimal b1, BigDecimal b2) {
         if ((b1 == null && b2 != null) || (b1 != null && b2 == null)) {
             return false; // distinct nullity for min
@@ -175,10 +138,6 @@ public class Util {
         } else {
             return UUID.fromString(uuidStr);
         }
-    }
-
-    public static String UuidNilPg() {
-        return UUID_NIL_POSTGRES;
     }
 
     public static String blankIfNull(String string) {
@@ -233,11 +192,25 @@ public class Util {
     }
 
     public static ObjectMapper getObjectMapper() {
-        return new ObjectMapper().registerModule(new JavaTimeModule());
+        // TODO - register module and create mapper only once? May be thread-unsafe.
+        SimpleModule simpleModule = new SimpleModule()
+                .addDeserializer(BigDecimal.class, new NotAvailableJacksonDeserializer(BigDecimal.ZERO))
+                .addDeserializer(Long.class, new NotAvailableJacksonDeserializer(0L))
+                .addDeserializer(Integer.class, new NotAvailableJacksonDeserializer(0));
+        ObjectMapper om = new ObjectMapper()
+                .registerModule(simpleModule)
+                .registerModule(new JavaTimeModule());
+        return om;
     }
 
-    public static int getIdFromUrl(String url) {
-           var pieces = Strings.split(url, '/');
-           return Integer.parseInt(pieces[pieces.length-1]);
+    public static int getNumberFromUrl(String url) {
+           var pieces = url.split("/");
+           String lastPiece = pieces[pieces.length-1];
+           var lastPieceSplitted = lastPiece.split("=");
+           return Integer.parseInt(lastPieceSplitted[lastPieceSplitted.length-1]);
+    }
+
+    public static String justDigits(String str) {
+        return str.replaceAll("[^0-9]", "");
     }
 }
