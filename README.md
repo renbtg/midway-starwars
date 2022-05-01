@@ -1,2 +1,1 @@
-# midway-starwars
-Midway Star Wars
+TODO readme, com DOCKER e orientacoes se der tempo de Docker
