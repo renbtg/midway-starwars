@@ -1,10 +1,13 @@
-package com.midway.starwarsapi.flyway;
+package com.midway.starwarsapi.startup;
 
+import com.midway.starwarsapi.dto.starwars.FilmDto;
+import com.midway.starwarsapi.dto.starwars.FilmResultSet;
 import com.midway.starwarsapi.service.starwarsapi.StarwarsFilmRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Configuration
 public class FilmLoader {
@@ -13,7 +16,7 @@ public class FilmLoader {
 
     @PostConstruct
     public void populateRedisCache() {
-        var films = starwarsFilmRestService.getFilmResultSet();
+        List<FilmDto> films = starwarsFilmRestService.getResultSet(new FilmResultSet());
         // @PutSomething
         int i = 0;
     }

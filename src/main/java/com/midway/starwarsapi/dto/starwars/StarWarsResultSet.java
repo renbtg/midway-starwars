@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-public abstract class AbstractResultSet<T extends AbstractDto> {
+public class StarWarsResultSet<T extends AbstractDto> {
     @Getter @Setter private Integer count;
 
     @JsonProperty("previous")
