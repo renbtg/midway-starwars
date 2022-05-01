@@ -8,13 +8,18 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.time.Duration;
 import java.util.Collections;
 
 @SpringBootApplication
@@ -72,4 +77,28 @@ public class StarWarsApiApplication implements ApiExpiration {
     }
 
  */
+
+    @Value("${cache.film.duration.minutes}")
+    private Integer cacheDurationMinutes;
+
+    @Bean
+    public RedisCacheConfiguration cacheConfiguration() {
+        "TODO - nao estah sendo chamado, cache desabilitado";
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(cacheDurationMinutes))
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }
+    @Bean
+    public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
+        "TODO - nao estah sendo chamado, cache desabilitado";
+        return (builder) -> builder
+                .withCacheConfiguration("films-rest",
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(cacheDurationMinutes)))
+                .withCacheConfiguration("people-rest",
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(cacheDurationMinutes)))
+                .withCacheConfiguration("planets-rest",
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(cacheDurationMinutes)));
+    }
+
 }

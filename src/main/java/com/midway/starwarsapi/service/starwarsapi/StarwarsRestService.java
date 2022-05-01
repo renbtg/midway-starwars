@@ -6,6 +6,7 @@ import com.midway.starwarsapi.dto.starwars.StarWarsResultSet;
 import com.midway.starwarsapi.util.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,7 +17,7 @@ public abstract class StarwarsRestService<T extends AbstractDto> {
     @Value("${api.starwars.url.root}")
     protected String starwarsApiRootUrl; // showing off private/protected/public knowledge -- SHOULD be private with @getter
 
-    public T getEntity(T entity) {
+    protected T obtainEntity(T entity) {
         String url = String.format("%s/%s/%d", starwarsApiRootUrl, entity.restEntityName(), entity.getId());
         var restTemplate = new RestTemplate();
         ResponseEntity<Object> responseEntity =
@@ -30,17 +31,19 @@ public abstract class StarwarsRestService<T extends AbstractDto> {
 
         return dto;
     }
+    /*
+    Each implementor must just call obtainEntity(...), and decorate method with @Cacheable("foo-rest") where
+    foo is one of planets, people, vehicles, species (always plural) etc.
+     */
+    public abstract T getEntity(int id);
 
     public abstract void fillDetails(T entity);
 
-    public List<T> fetchOneByOne(T prototype, List<String> urlList ) {
+    public List<T> fetchOneByOne(List<String> urlList) {
         return CollectionUtils.emptyIfNull(urlList)
                 .stream().
-                map(url -> {
-                            prototype.setId(Util.getNumberFromUrl(url));
-                            return getEntity(prototype);
-                        }
-                ).toList();
+                map(url -> getEntity(Util.getNumberFromUrl(url)))
+                .toList();
     }
 
     public List<T> getList(StarWarsResultSet<T> resultSetPrototype, T prototype) {
