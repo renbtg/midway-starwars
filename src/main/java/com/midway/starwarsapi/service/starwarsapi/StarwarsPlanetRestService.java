@@ -7,9 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class StarwarsPlanetRestService extends StarwarsRestService<PlanetDto> {
 
-    @Cacheable("planets-rest")
+    @Cacheable(value="planets-rest")
+    /*@Caching(
+            put= { @CachePut(value="planets-rest", key="#id", condition="#cachedData==false") },
+            cacheable = { @Cacheable(value ="planets-rest", key="#id", condition="#cachedData==true") }
+    ) WOULD REQUIRE EXTRA PARAMETER - does @Caching adds to cache if not present? IT SHOULD! GUESS IT DOES!*/
     @Override
     public PlanetDto getEntity(int id) {
+
         return obtainEntity(new PlanetDto(id));
     }
 

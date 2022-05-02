@@ -6,7 +6,6 @@ import com.midway.starwarsapi.dto.starwars.StarWarsResultSet;
 import com.midway.starwarsapi.util.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,6 +15,11 @@ import java.util.List;
 public abstract class StarwarsRestService<T extends AbstractDto> {
     @Value("${api.starwars.url.root}")
     protected String starwarsApiRootUrl; // showing off private/protected/public knowledge -- SHOULD be private with @getter
+
+    private static List<StarwarsRestService> serviceList = new ArrayList<>();
+    public static void addService(StarwarsRestService service) {
+        serviceList.add(service);
+    }
 
     protected T obtainEntity(T entity) {
         String url = String.format("%s/%s/%d", starwarsApiRootUrl, entity.restEntityName(), entity.getId());
@@ -40,9 +44,10 @@ public abstract class StarwarsRestService<T extends AbstractDto> {
     public abstract void fillDetails(T entity);
 
     public List<T> fetchOneByOne(List<String> urlList) {
+
         return CollectionUtils.emptyIfNull(urlList)
                 .stream().
-                map(url -> getEntity(Util.getNumberFromUrl(url)))
+                map(url -> getSelf().getEntity(Util.getNumberFromUrl(url)))
                 .toList();
     }
 
@@ -72,4 +77,20 @@ public abstract class StarwarsRestService<T extends AbstractDto> {
         return resultSet;
     }
 
+    private StarwarsRestService<T> getSelf() {
+        for (var svc: serviceList) {
+            try {
+                if (getClass().isAssignableFrom(svc.getClass())) {
+                    return svc;
+                } else {
+                    int z = 0;
+                    // do nothing;
+                }
+            }catch (RuntimeException ignore) {
+                // do nothing
+                int z = 0;
+            }
+        }
+        return null;
+    }
 }

@@ -8,6 +8,7 @@ import com.midway.starwarsapi.view.StarWarsView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiController implements ApiExpiration {
     private static final Logger logger = LogManager.getLogger(ApiController.class);
 
-    private final StarwarsFilmRestService starwarsFilmRestService;
+    @Autowired private StarwarsFilmRestService starwarsFilmRestService;
 
     @Value("${appVersion}")
     private String appVersion;
@@ -32,10 +33,6 @@ public class ApiController implements ApiExpiration {
 
     @Value("${exportFiles.fixedDiskSpaceBufferGigabytes:0}")
     private Double fixedExportDiskSpaceBufferGigabytes;
-
-    public ApiController(StarwarsFilmRestService starwarsFilmRestService) {
-        this.starwarsFilmRestService = starwarsFilmRestService;
-    }
 
     @GetMapping(value = "/version")
     public String getVersion() {

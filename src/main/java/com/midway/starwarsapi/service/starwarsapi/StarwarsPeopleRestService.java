@@ -13,7 +13,7 @@ public class StarwarsPeopleRestService extends StarwarsRestService<PeopleDto> {
     StarwarsPlanetRestService starwarsPlanetRestService;
 
 
-    @Cacheable("people-rest")
+    @Cacheable(value="people-rest")
     @Override
     public PeopleDto getEntity(int id) {
         return obtainEntity(new PeopleDto(id));

@@ -8,21 +8,18 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.time.Duration;
 import java.util.Collections;
 
 @SpringBootApplication
+@EnableCaching
 public class StarWarsApiApplication implements ApiExpiration {
 
     @Value("${appVersion}")
@@ -81,24 +78,107 @@ public class StarWarsApiApplication implements ApiExpiration {
     @Value("${cache.film.duration.minutes}")
     private Integer cacheDurationMinutes;
 
+/*
+    @Configuration
+    @EnableCaching
+    public static class CachingConfig {
+
+        @Bean
+        public CacheManager cacheManager() {
+            return new ConcurrentMapCacheManager("addresses");
+        }
+    }
+
+    @Component
+    public static class SimpleCacheCustomizer
+            implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
+
+        @Override
+        public void customize(ConcurrentMapCacheManager cacheManager) {
+            cacheManager.setCacheNames(List.of("films-rest", "people-rest", "planets-rest"));
+        }
+    }
+*/
+/*
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
-        "TODO - nao estah sendo chamado, cache desabilitado";
         return RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(cacheDurationMinutes))
+                .entryTtl(Duration.ofMinutes(60))
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
-        "TODO - nao estah sendo chamado, cache desabilitado";
         return (builder) -> builder
                 .withCacheConfiguration("films-rest",
-                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(cacheDurationMinutes)))
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(10)))
                 .withCacheConfiguration("people-rest",
-                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(cacheDurationMinutes)))
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(5)))
                 .withCacheConfiguration("planets-rest",
-                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(cacheDurationMinutes)));
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(5)));
+    }
+*/
+
+/*
+    @Configuration
+    @EnableCaching
+    public static class RedisConfiguration {
+        @Value("${spring.redis.host}")
+        private String REDIS_HOSTNAME;
+
+        @Value("${spring.redis.port}")
+        private int REDIS_PORT;
+
+        @Bean
+        public RedisTemplate<String, String> redisTemplate() {
+            final RedisTemplate<String, String> redisTemplate =
+                    new RedisTemplate<>();
+
+            redisTemplate.setKeySerializer(new StringRedisSerializer());
+            redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+
+            redisTemplate.setHashKeySerializer(new GenericToStringSerializer<>(String.class));
+            redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
+
+            RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(REDIS_HOSTNAME, REDIS_PORT);
+
+            JedisConnectionFactory factory =
+                    new JedisConnectionFactory(configuration, JedisClientConfiguration.builder().build());
+
+            factory.afterPropertiesSet();
+
+            redisTemplate.setConnectionFactory(factory);
+
+            return redisTemplate;
+        }
+    }
+*/
+/*
+    @Configuration
+    @ConfigurationProperties(prefix = "spring.redis")
+    @Setter
+    public class RedisConfig {
+
+        private String host;
+        private String password;
+
+        @Bean
+        @Primary
+        public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory(RedisConfiguration defaultRedisConfig) {
+            LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                    .useSsl().build();
+            return new LettuceConnectionFactory(defaultRedisConfig, clientConfig);
+        }
+
+        @Bean
+        public RedisConfiguration defaultRedisConfig() {
+            RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+            config.setHostName(host);
+            config.setPassword(RedisPassword.of(password));
+            return config;
+        }
     }
 
+ */
 }
