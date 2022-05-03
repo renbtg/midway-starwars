@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 public class StarwarsFilmRestService extends StarwarsRestService<FilmDto>{
     @Autowired
     StarwarsPeopleRestService starwarsPeopleRestService;
+    //@Autowired
+    //StarwarsPlanetRestService starwarsPlanetRestService;
 
     @Cacheable(value="films-rest")
     /*@Caching(
@@ -26,7 +28,9 @@ public class StarwarsFilmRestService extends StarwarsRestService<FilmDto>{
 
     @Override
     public void fillDetails(FilmDto entity) {
+        // FOR NOW, this is the single filDetails(...) implementation that deep-reads lists.
         entity.setCharacterList(starwarsPeopleRestService.fetchOneByOne(entity.getCharacterUrlList()));
+        //entity.setPlanetList(starwarsPlanetRestService.fetchOneByOne(entity.getPlanetUrlList()));
     }
 
 
