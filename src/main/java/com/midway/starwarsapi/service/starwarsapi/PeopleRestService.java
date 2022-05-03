@@ -20,7 +20,9 @@ public class PeopleRestService extends RestService<PeopleDto> {
 
     @Override
     public void fillDetails(PeopleDto entity) {
-        int homeWorldId = Util.getNumberFromUrl(entity.getHomeWorldUrl());
-        entity.setHomeWorldDetail(planetRestService.getEntity(homeWorldId));
+        if (entity.getHomeWorldUrl() != null) {
+            int homeWorldId = Util.getNumberFromUrl(entity.getHomeWorldUrl());
+            entity.setHomeWorldObject(planetRestService.getEntity(homeWorldId));
+        }
     }
 }

@@ -6,6 +6,9 @@ import com.midway.starwarsapi.service.starwarsapi.FilmRestService;
 import com.midway.starwarsapi.service.starwarsapi.PeopleRestService;
 import com.midway.starwarsapi.service.starwarsapi.PlanetRestService;
 import com.midway.starwarsapi.service.starwarsapi.RestService;
+import com.midway.starwarsapi.service.starwarsapi.SpeciesRestService;
+import com.midway.starwarsapi.service.starwarsapi.StarshipRestService;
+import com.midway.starwarsapi.service.starwarsapi.VehicleRestService;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +34,9 @@ public class FilmLoader  {
     @Autowired private FilmRestService filmRestService;
     @Autowired private PeopleRestService peopleRestService;
     @Autowired private PlanetRestService planetRestService;
+    @Autowired private SpeciesRestService speciesRestService;
+    @Autowired private StarshipRestService starshipRestService;
+    @Autowired private VehicleRestService vehicleRestService;
 
     private ExecutorService executorService;
 
@@ -41,8 +47,11 @@ public class FilmLoader  {
         alreadyRun = true;
 
         RestService.addService(filmRestService);
-        RestService.addService(peopleRestService);
         RestService.addService(planetRestService);
+        RestService.addService(peopleRestService);
+        RestService.addService(speciesRestService);
+        RestService.addService(starshipRestService);
+        RestService.addService(vehicleRestService);
 
         BasicThreadFactory factory = new BasicThreadFactory.Builder()
                 .namingPattern("myspringbean-thread-%d").build();

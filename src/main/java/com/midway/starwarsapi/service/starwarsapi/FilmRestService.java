@@ -17,6 +17,10 @@ public class FilmRestService extends RestService<FilmDto> {
     PlanetRestService planetRestService;
     @Autowired
     SpeciesRestService speciesRestService;
+    @Autowired
+    VehicleRestService vehicleRestService;
+    @Autowired
+    StarshipRestService starshipRestService;
 
     @Cacheable(value="films-rest")
     /*@Caching(
@@ -33,8 +37,9 @@ public class FilmRestService extends RestService<FilmDto> {
         // FOR NOW, this is the single filDetails(...) implementation that deep-reads lists.
         entity.setPeopleDtoList(peopleRestService.fetchOneByOne(entity.getPeopleUrlList()));
         entity.setPlanetList(planetRestService.fetchOneByOne(entity.getPlanetUrlList()));
-        entity.setPlanetList(planetRestService.fetchOneByOne(entity.getSpeciesUrlList()));
-
+        entity.setSpeciesDtoList(speciesRestService.fetchOneByOne(entity.getSpeciesUrlList()));
+        entity.setStarshipDtoList(starshipRestService.fetchOneByOne(entity.getStarshipUrlList()));
+        entity.setVehicleDtoList(vehicleRestService.fetchOneByOne(entity.getVehicleUrlList()));
     }
 
 

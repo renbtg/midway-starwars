@@ -27,11 +27,11 @@ public class PlanetDto extends AbstractDto {
 
     @Getter @Setter private Long population;
 
-    @JsonProperty("residents") @Getter @Setter private List<String> residentUrlList;
-    @JsonProperty("residentDetails") @Getter @Setter private List<PeopleDto> residentList;
+    @JsonProperty("residents") @Getter @Setter private List<String> peopleUrlList;
+    @JsonProperty("residentObjects") @Getter @Setter private List<PeopleDto> peopleDtoList;
 
     @JsonProperty("films") @Getter @Setter private List<String> filmUrlList;
-    @JsonProperty("filmDetails") @Getter @Setter private List<FilmDto> filmList;
+    @JsonProperty("filmObjects") @Getter @Setter private List<FilmDto> filmDtoList;
 
     public PlanetDto() {}
     public PlanetDto(int id) {

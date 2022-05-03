@@ -28,11 +28,11 @@ public abstract class AbstractDto {
     @Getter @Setter private boolean defailFillingStarted = false; // TODO - useful for OUR-api callers to know data-load completion? Or HTTP status 206?
     @Getter @Setter private boolean defailFillingFinished = false; // TODO - useful for OUR-api callers to know data-load completion? Or HTTP status 206?
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeConstants.NEAR_ISO8601_DATEFORMAT)
-    @Getter @Setter private LocalDateTime created;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeConstants.NEAR_ISO8601_DATEFORMAT)
+    @Getter @Setter private /*LocalDateTime*/ String created;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeConstants.NEAR_ISO8601_DATEFORMAT)
-    @Getter @Setter private LocalDateTime edited;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeConstants.NEAR_ISO8601_DATEFORMAT)
+    @Getter @Setter private /*LocalDateTime*/ String edited;
 
     @Getter private String url;
     public void setUrl(String url) {

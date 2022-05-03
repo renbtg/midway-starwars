@@ -19,7 +19,7 @@ public class PeopleDto extends AbstractDto {
 
     @JsonProperty("homeworld") @Getter @Setter private String homeWorldUrl;
 
-    @JsonProperty("homeworldDetail") @Getter @Setter private PlanetDto homeWorldDetail;
+    @JsonProperty("homeworldObject") @Getter @Setter private PlanetDto homeWorldObject;
 
 
 

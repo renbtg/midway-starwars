@@ -13,20 +13,20 @@ public class DtoResultSet<T extends AbstractDto> {
     @Getter @Setter private Integer count;
 
     @JsonProperty("previous")
-    @Getter private String previousUri;
-    public void sePreviousUri(String previousUri) {
-        this.previousUri = previousUri;
-        previousPage = Util.getNumberFromUrl(previousUri);
+    @Getter private String previousUrl;
+    public void sePreviousUrl(String previousUrl) {
+        this.previousUrl = previousUrl;
+        previousPage = Util.getNumberFromUrl(previousUrl);
     }
 
     @JsonIgnore @Hidden
     @Getter @Setter private Integer previousPage;
 
     @JsonProperty("next")
-    @Getter private String nextUri;
+    @Getter private String nextUrl;
     public void seNextUri(String previousUri) {
-        this.nextUri = nextUri;
-        nextPage = Util.getNumberFromUrl(nextUri);
+        this.nextUrl = nextUrl;
+        nextPage = Util.getNumberFromUrl(nextUrl);
     }
 
     @JsonIgnore @Hidden

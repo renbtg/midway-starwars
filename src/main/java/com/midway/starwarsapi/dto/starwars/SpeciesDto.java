@@ -12,11 +12,11 @@ public class SpeciesDto extends AbstractDto {
     @Getter @Setter private String designation;
     @JsonProperty("average_height") @Getter @Setter private Integer averageHeight;
     @JsonProperty("skin_colors") @Getter @Setter private String skinColors;
-    @JsonProperty("average_lifespan") @Getter @Setter private Integer averageLifeSpan;
+    @JsonProperty("average_lifespan") @Getter @Setter private String averageLifeSpan;
     @Getter @Setter private String language;
 
     @JsonProperty("homeworld") @Getter @Setter private String homeWorldUrl;
-    @JsonProperty("homeworldDetail") @Getter @Setter private PlanetDto homeWorldDetail;
+    @JsonProperty("homeworldObject") @Getter @Setter private PlanetDto homeWorldDto;
 
 
     @JsonProperty("films")
@@ -28,8 +28,6 @@ public class SpeciesDto extends AbstractDto {
     @Getter @Setter private List<String> peopleUrlList;
     @JsonProperty("peopleObjects")
     @Getter @Setter private List<PeopleDto> peopleDtoList;
-
-    // TODO - referenced Lists like "films", "vehichles" etc.
 
     public SpeciesDto() {}
     public SpeciesDto(int id) {

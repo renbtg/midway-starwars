@@ -1,6 +1,5 @@
 package com.midway.starwarsapi.service.starwarsapi;
 
-import com.midway.starwarsapi.dto.starwars.PeopleDto;
 import com.midway.starwarsapi.dto.starwars.SpeciesDto;
 import com.midway.starwarsapi.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,9 @@ public class SpeciesRestService extends RestService<SpeciesDto> {
 
     @Override
     public void fillDetails(SpeciesDto entity) {
-        // TODO - Species(Dto+Service) and People(Dto+Service) could inherit from LivingBeing(Dto+Service)
-        int homeWorldId = Util.getNumberFromUrl(entity.getHomeWorldUrl());
-        entity.setHomeWorldDetail(planetRestService.getEntity(homeWorldId));
+        if (entity.getHomeWorldUrl() != null) {
+            int homeWorldId = Util.getNumberFromUrl(entity.getHomeWorldUrl());
+            entity.setHomeWorldDto(planetRestService.getEntity(homeWorldId));
+        }
     }
 }
