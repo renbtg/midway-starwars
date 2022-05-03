@@ -2,33 +2,37 @@ package com.midway.starwarsapi.startup;
 
 import com.midway.starwarsapi.dto.starwars.FilmDto;
 import com.midway.starwarsapi.dto.starwars.FilmResultSet;
-import com.midway.starwarsapi.service.starwarsapi.StarwarsFilmRestService;
-import com.midway.starwarsapi.service.starwarsapi.StarwarsPeopleRestService;
-import com.midway.starwarsapi.service.starwarsapi.StarwarsPlanetRestService;
-import com.midway.starwarsapi.service.starwarsapi.StarwarsRestService;
+import com.midway.starwarsapi.service.starwarsapi.FilmRestService;
+import com.midway.starwarsapi.service.starwarsapi.PeopleRestService;
+import com.midway.starwarsapi.service.starwarsapi.PlanetRestService;
+import com.midway.starwarsapi.service.starwarsapi.RestService;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.availability.ApplicationAvailability;
 import org.springframework.boot.availability.AvailabilityChangeEvent;
 import org.springframework.boot.availability.LivenessState;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
-@EnableScheduling
 public class FilmLoader  {
+    private static final Logger logger = LogManager.getLogger(FilmLoader.class);
+
     private static boolean alreadyRun = false;
 
-    @Autowired private StarwarsFilmRestService starwarsFilmRestService;
-    @Autowired private StarwarsPeopleRestService starwarsPeopleRestService;
-    @Autowired private StarwarsPlanetRestService starwarsPlanetRestService;
+    @Autowired private FilmRestService filmRestService;
+    @Autowired private PeopleRestService peopleRestService;
+    @Autowired private PlanetRestService planetRestService;
+
+    private ExecutorService executorService;
 
     public void runOnceOnStartup() {
         if (alreadyRun) {
@@ -36,12 +40,30 @@ public class FilmLoader  {
         }
         alreadyRun = true;
 
-        StarwarsRestService.addService(starwarsFilmRestService);
-        StarwarsRestService.addService(starwarsPeopleRestService);
-        StarwarsRestService.addService(starwarsPlanetRestService);
+        RestService.addService(filmRestService);
+        RestService.addService(peopleRestService);
+        RestService.addService(planetRestService);
 
-        List<FilmDto> films = starwarsFilmRestService.getList(new FilmResultSet(), new FilmDto());
-        int z=1;
+        BasicThreadFactory factory = new BasicThreadFactory.Builder()
+                .namingPattern("myspringbean-thread-%d").build();
+
+        executorService = Executors.newSingleThreadExecutor(factory);
+        executorService.execute(() -> {
+            try {
+                // do something
+                System.out.println("thread started in runOnceAtStartup() - TODO remove text");
+                List<FilmDto> films = new ArrayList<>(); // will be thread-safe structure
+                filmRestService.fillList(FilmRestService.GLOBAL_FILM_LIST, new FilmResultSet(), new FilmDto());
+                System.out.println("thread finishing in runOnceAtStartup() - TODO - remove text");
+                int z=1;
+            } catch (Exception e) {
+                logger.error("error: ", e);
+            }
+        });
+        executorService.shutdown();
+
+
+
     }
 
     @EventListener
@@ -52,6 +74,14 @@ public class FilmLoader  {
                 break;
             case CORRECT:
                 runOnceOnStartup();
+        }
+    }
+
+    @PreDestroy
+    public void beanDestroy() {
+        System.out.println("@PreDestroy...beanDestroy() called! TODO - remove text");
+        if(executorService != null){
+            executorService.shutdownNow();
         }
     }
 }

@@ -12,7 +12,14 @@ import java.util.List;
 public class FilmDto extends AbstractDto {
     @Getter @Setter private Integer version = 1;
 
-
+    @JsonProperty("title")
+    public String getName() {
+        return super.getName();
+    }
+    @JsonProperty("title") // TODO - do we need both getter and setter to have overriden "title" for name ?
+    public void setName(String name) {
+        super.setName(name);
+    }
 
     @Getter @Setter private String title;
 
@@ -31,33 +38,28 @@ public class FilmDto extends AbstractDto {
     @Getter @Setter private LocalDate releaseDate;
 
     @JsonProperty("characters")
-    @Getter @Setter private List<String> characterUrlList;
-
-    @JsonProperty("characterDetails")
-    @Getter @Setter private List<PeopleDto> characterList;
+    @Getter @Setter private List<String> peopleUrlList;
+    @JsonProperty("characterObjects")
+    @Getter @Setter private List<PeopleDto> peopleDtoList;
 
     @JsonProperty("planets")
     @Getter @Setter private List<String> planetUrlList;
-
-    @JsonProperty("planetDetails")
+    @JsonProperty("planetObjects")
     @Getter @Setter private List<PlanetDto> planetList;
 
     @JsonProperty("starships")
     @Getter @Setter private List<String> starshipUrlList;
-
-    @JsonProperty("starshipDetails")
+    @JsonProperty("starshipObjects")
     @Getter @Setter private List<StarshipDto> starshipDtoList;
 
     @JsonProperty("vehicles")
     @Getter @Setter private List<String> vehicleUrlList;
-
-    @JsonProperty("vehicleDetails")
+    @JsonProperty("vehicleObjects")
     @Getter @Setter private List<VehicleDto> vehicleDtoList;
 
     @JsonProperty("species")
     @Getter @Setter private List<String> speciesUrlList;
-
-    @JsonProperty("speciesDetails")
+    @JsonProperty("speciesObjects")
     @Getter @Setter private List<SpeciesDto> speciesDtoList;
 
     public FilmDto() {}
@@ -66,7 +68,7 @@ public class FilmDto extends AbstractDto {
     }
     @Override
     public String restEntityName() {
-        return AbstractDto.FILM_REST_URL_PIECE;
+        return FILM_REST_URL_PIECE;
     }
 
 }

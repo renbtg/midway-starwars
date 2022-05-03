@@ -1,25 +1,27 @@
 package com.midway.starwarsapi.service.starwarsapi;
 
 import com.midway.starwarsapi.dto.starwars.PeopleDto;
+import com.midway.starwarsapi.dto.starwars.SpeciesDto;
 import com.midway.starwarsapi.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PeopleRestService extends RestService<PeopleDto> {
+public class SpeciesRestService extends RestService<SpeciesDto> {
     @Autowired
     PlanetRestService planetRestService;
 
 
-    @Cacheable(value="people-rest")
+    @Cacheable(value="species-rest")
     @Override
-    public PeopleDto getEntity(int id) {
-        return obtainEntity(new PeopleDto(id));
+    public SpeciesDto getEntity(int id) {
+        return obtainEntity(new SpeciesDto(id));
     }
 
     @Override
-    public void fillDetails(PeopleDto entity) {
+    public void fillDetails(SpeciesDto entity) {
+        // TODO - Species(Dto+Service) and People(Dto+Service) could inherit from LivingBeing(Dto+Service)
         int homeWorldId = Util.getNumberFromUrl(entity.getHomeWorldUrl());
         entity.setHomeWorldDetail(planetRestService.getEntity(homeWorldId));
     }

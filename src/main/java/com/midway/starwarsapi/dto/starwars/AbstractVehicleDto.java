@@ -7,18 +7,20 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class StarshipDto extends AbstractDto {
+public abstract class AbstractVehicleDto extends AbstractDto {
     @Getter @Setter private String model;
+    @Getter @Setter private String manufacturer;
     @JsonProperty("cost_in_credits") @Getter @Setter private Integer costInCredits;
-    @Getter @Setter private Integer length;
-    @JsonProperty("max_atmosphering_speed") @Getter @Setter private Integer maxAtmosphericSpeed;
+    @Getter @Setter private BigDecimal length;
+    @JsonProperty("max_atmospheric_speed") @Getter @Setter private Integer maxAtmosphericSpeed;
     @Getter @Setter private String crew;
-    @Getter @Setter private String passengers;
-    @JsonProperty("cargo_capacity") @Getter @Setter private String cargoCapacity;
+    @Getter @Setter private Integer passengers;
+    @JsonProperty("cargo_capacity") @Getter @Setter private Integer cargoCapacity;
     @Getter @Setter private String consumables;
-    @JsonProperty("hyperdrive_rating") @Getter @Setter private BigDecimal hyperdriveRating;
-    @JsonProperty("MGLT") @Getter @Setter private Integer mglt;
-    @JsonProperty("starship_class") @Getter @Setter private String starshipClass;
+    @Getter @Setter private String classOfVehicle; // concrete implementors define field name
+
+    //@JsonProperty("hyperdrive_rating") @Getter @Setter private BigDecimal hyperdriveRating; // STARSHIP ONLY
+    //@JsonProperty("MGLT") @Getter @Setter private Integer mglt; // STARSHIP ONLY
 
     @JsonProperty("films")
     @Getter @Setter private List<String> filmUrlList;
@@ -31,13 +33,9 @@ public class StarshipDto extends AbstractDto {
     @Getter @Setter private List<PeopleDto> pilotDtoList;
 
 
-    public StarshipDto() {}
-    public StarshipDto(int id) {
+    public AbstractVehicleDto() {}
+    public AbstractVehicleDto(int id) {
         super(id);
     }
 
-    @Override
-    public String restEntityName() {
-        return STARSHIP_REST_URL_PIECE;
-    }
 }

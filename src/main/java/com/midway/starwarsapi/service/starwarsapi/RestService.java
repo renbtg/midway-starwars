@@ -2,7 +2,8 @@ package com.midway.starwarsapi.service.starwarsapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.midway.starwarsapi.dto.starwars.AbstractDto;
-import com.midway.starwarsapi.dto.starwars.StarWarsResultSet;
+import com.midway.starwarsapi.dto.starwars.DtoResultSet;
+import com.midway.starwarsapi.dto.starwars.FilmDto;
 import com.midway.starwarsapi.util.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public abstract class StarwarsRestService<T extends AbstractDto> {
+public abstract class RestService<T extends AbstractDto> {
 
     @Value("${api.starwars.url.root}")
     protected String starwarsApiRootUrl; // showing off private/protected/public knowledge -- SHOULD be private with @getter
 
     private RestClientException restClientException = null;
-    private static final List<StarwarsRestService> serviceList = new ArrayList<>();
-    public static void addService(StarwarsRestService service) {
+    private static final List<RestService> serviceList = new ArrayList<>();
+    public static void addService(RestService service) {
         serviceList.add(service);
     }
 
@@ -72,19 +73,20 @@ public abstract class StarwarsRestService<T extends AbstractDto> {
                 .toList();
     }
 
-    public List<T> getList(StarWarsResultSet<T> resultSetPrototype, T prototype) {
-        List<T> list = new ArrayList<>();
+    public void fillList(List<T> list, DtoResultSet<T> resultSetPrototype, T prototype) {
+        // List... list could me Map, so we can speed/simplify OUR enrpoint to get a film by id
         int currPage = 1;
-        StarWarsResultSet<T> pageResultSet;
+        DtoResultSet<T> pageResultSet;
         do {
             pageResultSet = getPageResultSet(resultSetPrototype, prototype, currPage++);
-            pageResultSet.getResults().forEach(this::fillAllDetails);
             list.addAll(pageResultSet.getResults());
         } while (pageResultSet.getNextPage() != null);
-        return list;
+        list.forEach(this::fillAllDetails);
+
+        return;
     }
 
-    private StarWarsResultSet<T> getPageResultSet(StarWarsResultSet<T> resultSetPrototype, T prototype, int page) {
+    private DtoResultSet<T> getPageResultSet(DtoResultSet<T> resultSetPrototype, T prototype, int page) {
 
         String url = String.format("%s/%s/?page=%d", starwarsApiRootUrl, prototype.restEntityName(), page); // TODO - suse standard GET URL formatter/caller for param "page"
         var restTemplate = new RestTemplate();
@@ -97,7 +99,7 @@ public abstract class StarwarsRestService<T extends AbstractDto> {
         return mapper.convertValue(object, resultSetPrototype.getClass());
     }
 
-    private StarwarsRestService<T> getSelf() {
+    private RestService<T> getSelf() {
         for (var svc: serviceList) {
             try {
                 if (getClass().isAssignableFrom(svc.getClass())) {

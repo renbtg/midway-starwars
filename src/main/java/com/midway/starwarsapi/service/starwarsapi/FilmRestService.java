@@ -1,20 +1,22 @@
 package com.midway.starwarsapi.service.starwarsapi;
 
-import com.midway.starwarsapi.dto.starwars.PeopleDto;
 import com.midway.starwarsapi.dto.starwars.FilmDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class StarwarsFilmRestService extends StarwarsRestService<FilmDto>{
+public class FilmRestService extends RestService<FilmDto> {
+    public static final List<FilmDto> GLOBAL_FILM_LIST = new ArrayList<>(); // no need to synchronize so far
     @Autowired
-    StarwarsPeopleRestService starwarsPeopleRestService;
-    //@Autowired
-    //StarwarsPlanetRestService starwarsPlanetRestService;
+    PeopleRestService peopleRestService;
+    @Autowired
+    PlanetRestService planetRestService;
+    @Autowired
+    SpeciesRestService speciesRestService;
 
     @Cacheable(value="films-rest")
     /*@Caching(
@@ -29,8 +31,10 @@ public class StarwarsFilmRestService extends StarwarsRestService<FilmDto>{
     @Override
     public void fillDetails(FilmDto entity) {
         // FOR NOW, this is the single filDetails(...) implementation that deep-reads lists.
-        entity.setCharacterList(starwarsPeopleRestService.fetchOneByOne(entity.getCharacterUrlList()));
-        //entity.setPlanetList(starwarsPlanetRestService.fetchOneByOne(entity.getPlanetUrlList()));
+        entity.setPeopleDtoList(peopleRestService.fetchOneByOne(entity.getPeopleUrlList()));
+        entity.setPlanetList(planetRestService.fetchOneByOne(entity.getPlanetUrlList()));
+        entity.setPlanetList(planetRestService.fetchOneByOne(entity.getSpeciesUrlList()));
+
     }
 
 
