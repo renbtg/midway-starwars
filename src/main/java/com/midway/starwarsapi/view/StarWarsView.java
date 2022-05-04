@@ -1,9 +1,13 @@
 package com.midway.starwarsapi.view;
 
-public class StarWarsView {
+public interface StarWarsView {
 
-    public static class AllFilms {}
+    interface SimpleDto {}
+    interface OneFilm extends SimpleDto {}
 
 
+    interface FullDto extends SimpleDto {}
+
+    interface AllFilms {} // very restricted
 
 }

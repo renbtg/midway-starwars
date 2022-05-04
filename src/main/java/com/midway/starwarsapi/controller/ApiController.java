@@ -12,6 +12,7 @@ import com.midway.starwarsapi.util.ApiExpiration;
 import com.midway.starwarsapi.util.Util;
 import com.midway.starwarsapi.view.StarWarsView;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -66,6 +69,7 @@ public class ApiController implements ApiExpiration {
     }
 
 
+    @JsonView(StarWarsView.OneFilm.class)
     @GetMapping(value = "/films/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" })
     //@JsonView(OculinkView.FullProject.class)
@@ -80,9 +84,9 @@ public class ApiController implements ApiExpiration {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PatchMapping(path = "/films/{id}", consumes = "application/json-patch+json")
-    @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" })
-    public ResponseEntity<FilmDto> updateFilm(@PathVariable Integer id, @RequestBody JsonPatch patch) {
+//    @PatchMapping(path = "/films/{id}" , consumes = "application/json-patch+json")
+//    @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" })
+    public ResponseEntity<FilmDto> doesNotWorkUpdateFilm(@PathVariable Integer id, @RequestBody JsonPatch patch) {
         try {
             FilmDto filmDto = FilmRestService.GLOBAL_FILM_MAP.get(id);
             if (filmDto == null) {
@@ -100,6 +104,31 @@ public class ApiController implements ApiExpiration {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PatchMapping(path = "/films/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8081" })
+    public ResponseEntity<FilmDto> updateFilm(@PathVariable Integer id,@Valid @RequestBody FilmDto filmDtoPatch) {
+        FilmDto filmDto = FilmRestService.GLOBAL_FILM_MAP.get(id);
+        if (filmDto == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            if (StringUtils.equals(filmDtoPatch.getOpeningCrawl(), filmDto.getOpeningCrawl())) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+            } else {
+                // no need to create/store new object, just change in-memory content
+                synchronized(this) {
+                    // TODO - simple-minded synchronization for version update, is this helpful at all? It seems like it's not!
+                    //
+                    // TODO MAYBE - should have version/change history, in some List?
+                    //
+                    filmDto.setOpeningCrawl(filmDtoPatch.getOpeningCrawl());
+                    filmDto.setVersion(filmDto.getVersion() + 1);
+                }
+                return ResponseEntity.ok(filmDto); // TODO - do we want to return body at all, even when OK?
+            }
+        }
+    }
+
     private FilmDto applyPatchToFilm(JsonPatch patch, FilmDto targetCustomer) throws
             JsonPatchException, JsonProcessingException {
         ObjectMapper objectMapper = Util.getObjectMapper();

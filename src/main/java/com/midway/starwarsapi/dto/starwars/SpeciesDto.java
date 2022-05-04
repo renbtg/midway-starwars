@@ -1,11 +1,14 @@
 package com.midway.starwarsapi.dto.starwars;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.midway.starwarsapi.view.StarWarsView;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@JsonView(Object.class)
 public class SpeciesDto extends AbstractDto {
     @Getter @Setter private String name;
     @Getter @Setter private String classification;
@@ -19,14 +22,14 @@ public class SpeciesDto extends AbstractDto {
     @JsonProperty("homeworldObject") @Getter @Setter private PlanetDto homeWorldDto;
 
 
-    @JsonProperty("films")
+    @JsonProperty("films" ) @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> filmUrlList;
-    @JsonProperty("filmObjects")
+    @JsonProperty("filmObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<FilmDto> filmDtoList;
 
-    @JsonProperty("people")
+    @JsonProperty("people") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> peopleUrlList;
-    @JsonProperty("peopleObjects")
+    @JsonProperty("peopleObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<PeopleDto> peopleDtoList;
 
     public SpeciesDto() {}

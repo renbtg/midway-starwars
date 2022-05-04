@@ -1,13 +1,16 @@
 package com.midway.starwarsapi.dto.starwars;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.midway.starwarsapi.view.StarWarsView;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@JsonView(Object.class)
 public abstract class AbstractVehicleDto extends AbstractDto {
     @Getter @Setter private String model;
     @Getter @Setter private String manufacturer;
@@ -20,14 +23,14 @@ public abstract class AbstractVehicleDto extends AbstractDto {
     @Getter @Setter private String consumables;
     @Getter @Setter private String classOfVehicle; // concrete implementors define field name
 
-    @JsonProperty("films")
+    @JsonProperty("films") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> filmUrlList;
-    @JsonProperty("filmObjects")
+    @JsonProperty("filmObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<FilmDto> filmDtoList;
 
-    @JsonProperty("pilots")
+    @JsonProperty("pilots") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> peopleUrlList;
-    @JsonProperty("pilotObjects")
+    @JsonProperty("pilotObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<PeopleDto> peopleDtoList;
 
 

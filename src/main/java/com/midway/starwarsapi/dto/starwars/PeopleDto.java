@@ -2,11 +2,14 @@ package com.midway.starwarsapi.dto.starwars;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.midway.starwarsapi.view.StarWarsView;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@JsonView(Object.class)
 public class PeopleDto extends AbstractDto {
     @Getter @Setter private String name;
     @Getter @Setter private Integer height;
@@ -23,24 +26,24 @@ public class PeopleDto extends AbstractDto {
 
 
 
-    @JsonProperty("films")
+    @JsonProperty("films") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> filmUrlList;
-    @JsonProperty("filmObjects")
+    @JsonProperty("filmObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<FilmDto> filmDtoList;
 
-    @JsonProperty("starships")
+    @JsonProperty("starships") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> starshipUrlList;
-    @JsonProperty("starshipObjects")
+    @JsonProperty("starshipObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<StarshipDto> starshipDtoList;
 
-    @JsonProperty("vehicles")
+    @JsonProperty("vehicles") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> vehicleUrlList;
-    @JsonProperty("vehicleObjects")
+    @JsonProperty("vehicleObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<VehicleDto> vehicleDtoList;
 
-    @JsonProperty("species")
+    @JsonProperty("species") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<String> speciesUrlList;
-    @JsonProperty("speciesObjects")
+    @JsonProperty("speciesObjects") @JsonView(StarWarsView.FullDto.class)
     @Getter @Setter private List<SpeciesDto> speciesDtoList;
 
 
