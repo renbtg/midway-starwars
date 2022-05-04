@@ -21,8 +21,6 @@ public class FilmDto extends AbstractDto {
         super.setName(name);
     }
 
-    @Getter @Setter private String title;
-
     @JsonProperty("episode_id")
     @Getter @Setter String episodeId;
 

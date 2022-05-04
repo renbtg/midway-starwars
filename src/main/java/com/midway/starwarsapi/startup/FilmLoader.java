@@ -17,7 +17,6 @@ import org.springframework.boot.availability.AvailabilityChangeEvent;
 import org.springframework.boot.availability.LivenessState;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class FilmLoader  {
                 // do something
                 System.out.println("thread started in runOnceAtStartup() - TODO remove text");
                 List<FilmDto> films = new ArrayList<>(); // will be thread-safe structure
-                filmRestService.fillList(FilmRestService.GLOBAL_FILM_LIST, new FilmResultSet(), new FilmDto());
+                filmRestService.fillMap(FilmRestService.GLOBAL_FILM_MAP, new FilmResultSet(), new FilmDto());
                 System.out.println("thread finishing in runOnceAtStartup() - TODO - remove text");
                 int z=1;
             } catch (Exception e) {

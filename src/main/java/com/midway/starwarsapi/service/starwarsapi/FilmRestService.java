@@ -6,11 +6,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FilmRestService extends RestService<FilmDto> {
-    public static final List<FilmDto> GLOBAL_FILM_LIST = new ArrayList<>(); // no need to synchronize so far
+    public static final Map<Integer, FilmDto> GLOBAL_FILM_MAP = new LinkedHashMap<>(); // no need to synchronize so far
     @Autowired
     PeopleRestService peopleRestService;
     @Autowired

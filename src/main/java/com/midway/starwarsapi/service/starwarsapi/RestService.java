@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class RestService<T extends AbstractDto> {
@@ -73,15 +74,15 @@ public abstract class RestService<T extends AbstractDto> {
                 .toList();
     }
 
-    public void fillList(List<T> list, DtoResultSet<T> resultSetPrototype, T prototype) {
+    public void fillMap(Map<Integer, T> map, DtoResultSet<T> resultSetPrototype, T prototype) {
         // List... list could me Map, so we can speed/simplify OUR enrpoint to get a film by id
         int currPage = 1;
         DtoResultSet<T> pageResultSet;
         do {
             pageResultSet = getPageResultSet(resultSetPrototype, prototype, currPage++);
-            list.addAll(pageResultSet.getResults());
+            pageResultSet.getResults().forEach(entity -> map.put(entity.getId(), entity));
         } while (pageResultSet.getNextPage() != null);
-        list.forEach(this::fillAllDetails);
+        map.values().forEach(this::fillAllDetails);
 
         return;
     }
